@@ -1,0 +1,29 @@
+@startuml
+
+class DoorLockEngine {
+	
+}
+
+class DoorLockManager {
+	-Password mPassword
+	-int mCurStage
+}
+
+class Password {
+
+}
+
+'소리를 내주기
+'정답소리내기
+'오답소리내기
+class SoundManager {
+   +soundCorrection();
+   +soundFault();
+}
+
+DoorLockEngine -> DoorLockManager
+DoorLockManager -> Password
+Password -> SoundManager
+
+
+@enduml
