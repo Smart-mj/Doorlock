@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+
 public class Password {
 
 	private static final String PASSWORD_URL = "./password.txt";
@@ -16,11 +19,14 @@ public class Password {
 	private String mPassword;
 	private String mInputTempPassword;
 	private Scanner scanner = new Scanner(System.in);
+	private SecurityHelper mSecurityHelper;
 
 	// 생성자
 	public Password() {
 		System.out.println("901호 도어락 작동");
 		System.out.println("*#을 누르면 비밀번호를 변경할 수 있습니다.");
+		
+		mSecurityHelper = new SecurityHelper();
 		BufferedReader br;
 		if (isPasswordSavedFile()) {
 			File savedPassword = new File(PASSWORD_URL);
@@ -30,7 +36,9 @@ public class Password {
 				br = new BufferedReader(fileReader); 
 				
 				mPassword = br.readLine();
-				// decoding TODO
+				mPassword = mSecurityHelper.doDecrypt(mPassword);
+
+				System.out.println("loaded password:"+mPassword);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -100,16 +108,14 @@ public class Password {
 	}
 
 	public boolean verifyPassword() {
-		SoundManager sm = new SoundManager();
-
 		if (mPassword.equals(mInputTempPassword.substring(0, mInputTempPassword.length()-1))) {
 			System.out.println("일치한 비밀번호를 입력하였습니다.");
-			sm.playSound(SoundManager.CORRECT_WAV);
+			SoundUtil.playSound(SoundUtil.CORRECT_WAV);
 			return true;
 		}
 
 		System.out.println("일치하지 않은 비밀번호를 입력하였습니다.");
-		sm.playSound(SoundManager.FAULT_WAV);
+		SoundUtil.playSound(SoundUtil.FAULT_WAV);
 		this.mPassword = null;
 		return false;
 	}
@@ -122,13 +128,9 @@ public class Password {
 	      //파일에 문자열을 쓴다.
 	      //하지만 이미 파일이 존재하면 모든 내용을 삭제하고 그위에 덮어쓴다
 	      //파일이 손산될 우려가 있다.
-	      FileWriter fw = new FileWriter(saveFile);
-	      
-	      // mPassword -> encoding , sha 256 TODO
-	      fw.write(mPassword);
-	      
-	      
-	      //
+	      FileWriter fw = new FileWriter(saveFile);	    
+	     
+	      fw.write(mSecurityHelper.doEncrypt(mPassword));
 	      fw.close();
 	    } catch (IOException e) {
 	      e.printStackTrace();

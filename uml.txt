@@ -13,17 +13,21 @@ class Password {
 
 }
 
+class SecurityHelper {
+
+}
+
 '소리를 내주기
 '정답소리내기
 '오답소리내기
-class SoundManager {
+class SoundUtil {
    +soundCorrection();
    +soundFault();
 }
 
 DoorLockEngine -> DoorLockManager
 DoorLockManager -> Password
-Password -> SoundManager
-
+Password -> SoundUtil
+Password -> SecurityHelper
 
 @enduml

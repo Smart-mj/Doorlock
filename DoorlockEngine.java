@@ -26,7 +26,7 @@ public class DoorlockEngine {
 		
 		
 		mDoorlockManager.doInputStage();
-		while(true);
+		//while(true);
 	}
 	
 
